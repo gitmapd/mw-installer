@@ -16,11 +16,11 @@ def exts_url():
     'formatversion':2,
     'siprop':'extensions'
     }
-    return url,params 
-lista={}
-def request_url():
-    url,params=exts_url()
-    resp = requests.get(url,params=params).json()
+    return (url,params) 
+
+def request_url(urls,params):
+    lista={}
+    resp = requests.get(urls,params=params).json()
     resp = resp['query']['extensions']
     for ext in resp:
         if 'vcs-url' in ext:
@@ -28,14 +28,14 @@ def request_url():
     return lista
 @app.command()
 def prints():
-    for l,v in lista:
+    for l,v in request_url(*exts_url()).items():
         table=[[l,v]]
         typer.secho(tabulate(table,tablefmt="pretty"),fg=typer.colors.BRIGHT_GREEN)
 
 
 def main():
     app()
-
+    
 
 if __name__ == "__main__":  # ensure importing the script will not execute
     main()  

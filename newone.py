@@ -1,11 +1,14 @@
 import typer
+import os
+from dotenv import load_dotenv
+from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 from model import Extension
 from database import get_all_ext, insert_ext
 from get_ext import get_specific
 console = Console()
-
+load_dotenv()
 app = typer.Typer()
 
 
@@ -32,6 +35,16 @@ def show():
        table.add_row(str(idx), ext.name, ext.version, ext.url)
     console.print(table)
 
+@app.command(short_help='lists extensions')
+def list(path=None):
+    if path is None:
+        path = Path(f'{os.getenv("path")}')
+        dirs=[f for f in path.iterdir() if f.is_dir()]
+        folders={}
+        for i,d in enumerate(dirs):
+            folders[i]=d
+        for i,k in folders.items():
+            print(k)
 
 if __name__ == "__main__":
     app()

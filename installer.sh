@@ -70,7 +70,18 @@ download_package() {
 		chmod u=rwx,g=xr,o=x canasta
 		sudo mv canasta /usr/local/bin/canasta
 	else
-		echo "Invalid version"
+		canastaURL="https://github.com/CanastaWiki/Canasta-CLI/releases/download/latest/canasta"
+                wgetOptions=$(wget --help)
+                if [[ $wgetOptions == *"show-progress"* ]]
+                then
+                    wget -q --show-progress $canastaURL
+                else
+                    wget -q $canastaURL
+                fi
+                echo "Installing latest Canasta CLI"
+                chmod u=rwx,g=xr,o=x canasta
+
+		#echo "Invalid version"
 	fi
 }
 
@@ -94,10 +105,11 @@ while true; do
 			die "Illegal option ${1}"
 			;;
 		*) 	
-			wget -q  --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/latest/download/canasta"
-			echo "Installing latest Canasta CLI"
-	                chmod u=rwx,g=xr,o=x canasta
-        	        sudo mv canasta /usr/local/bin/canasta
+			download_package
+			#wget -q  --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/latest/download/canasta"
+			#echo "Installing latest Canasta CLI"
+	                #chmod u=rwx,g=xr,o=x canasta
+        	        #sudo mv canasta /usr/local/bin/canasta
 			break
 			;;
   esac

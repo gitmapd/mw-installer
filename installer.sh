@@ -29,7 +29,7 @@ download_package() {
 		wget -q --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/download/${version}/canasta"
 		echo "Installing ${version} Canasta CLI"
 		chmod u=rwx,g=xr,o=x canasta
-		sudo mv canasta /usr/local/bin/canasta
+		mv canasta /usr/local/bin/canasta
 	else
 		echo "Invalid version"
 	fi
@@ -49,7 +49,7 @@ while true; do
 				get_versions
 				download_package $(query_version)
 			fi
-			shift
+		        break	
 			;;
 		-*)
 			die "Illegal option ${1}"

@@ -27,7 +27,7 @@ download_package() {
 	version=${versions[${1}]}
 	if [[ -n ${version} ]]; then # Verify if the version with that index exists
 		wget -q --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/download/${version}/canasta"
-		echo "Installing Canasta CLI"
+		echo "Installing ${version} Canasta CLI"
 		chmod u=rwx,g=xr,o=x canasta
 		sudo mv canasta /usr/local/bin/canasta
 	else
@@ -39,7 +39,7 @@ while true; do
 	case "${1}" in
 		-l|--list-versions)
 			get_versions
-			shift
+			break
 			;;
 		-i|--install)
 			if [[ -n ${2} ]]; then
@@ -54,8 +54,9 @@ while true; do
 		-*)
 			die "Illegal option ${1}"
 			;;
-		*) 	wget -q  --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/latest/download/canasta"
-			echo "Installing Canasta CLI"
+		*) 	
+			wget -q  --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/latest/download/canasta"
+			echo "Installing latest Canasta CLI"
 	                chmod u=rwx,g=xr,o=x canasta
         	        mv canasta /usr/local/bin/canasta
 			break

@@ -1,7 +1,39 @@
 #!/usr/bin/env bash
-unset choice
+unset choice canastaURL
 die() { echo "$*" >&2; exit 2; }  # complain to STDERR and exit with error
 needs_arg() { if [ -z "$OPTARG" ]; then die "No arg for --$OPT option"; fi; }
+
+git --version 2>&1 >/dev/null
+GIT_IS_AVAILABLE=$?
+if [ $GIT_IS_AVAILABLE -ne 0 ]; 
+then echo "Git was not found, please install before continuing.";
+     exit; 
+else
+     echo "Git was found on the system"
+fi
+
+loc=$(command -v docker)
+if [ -z $loc ]
+then
+    echo "Docker is not installed; please follow the guide at https://docs.docker.com/engine/install/ to install it."
+elif [ -x $loc ]
+then
+    echo "Docker is already installed."
+else
+    echo "Docker appears to be installed at $loc but is not executable; please check permissions."
+fi
+
+loc=$(command -v docker-compose)
+if [ -z $loc ]
+then
+    echo "Docker Compose is not installed; please follow the guide at https://docs.docker.com/compose/install/ to install it."
+elif [ -x $loc ]
+then
+    echo "Docker Compose is already installed."
+else
+    echo "Docker Compose appears to be installed at $loc but is not executable; please check permissions."
+fi
+
 
 github_api="https://api.github.com"
 
@@ -26,10 +58,17 @@ query_version() {
 download_package() {
 	version=${versions[${1}]}
 	if [[ -n ${version} ]]; then # Verify if the version with that index exists
-		wget -q --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/download/${version}/canasta"
+		canastaURL="https://github.com/CanastaWiki/Canasta-CLI/releases/download/${version}/canasta"
+		wgetOptions=$(wget --help)
+		if [[ $wgetOptions == *"show-progress"* ]]
+		then
+		    wget -q --show-progress $canastaURL
+		else
+		    wget -q $canastaURL
+		fi
 		echo "Installing ${version} Canasta CLI"
 		chmod u=rwx,g=xr,o=x canasta
-		mv canasta /usr/local/bin/canasta
+		sudo mv canasta /usr/local/bin/canasta
 	else
 		echo "Invalid version"
 	fi
@@ -58,8 +97,9 @@ while true; do
 			wget -q  --show-progress "https://github.com/CanastaWiki/Canasta-CLI/releases/latest/download/canasta"
 			echo "Installing latest Canasta CLI"
 	                chmod u=rwx,g=xr,o=x canasta
-        	        mv canasta /usr/local/bin/canasta
+        	        sudo mv canasta /usr/local/bin/canasta
 			break
 			;;
   esac
 done
+
